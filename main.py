@@ -1,6 +1,7 @@
 import os
 import shutil
 import sys
+
 import constant as ct
 import net_conn as kts
 import file_operation as fo
@@ -9,7 +10,7 @@ import command_line_parameters as clp
 
 def run():
     # Проверка аргумента, если был вызван с -h или --help
-    if sys.argv[1] in [ct.Config.HELP_FLAG, ct.Config.HELP_FLAG_LONG]:
+    if len(sys.argv) == 1 or sys.argv[1] in [ct.Config.HELP_FLAG, ct.Config.HELP_FLAG_LONG]:
         os.system(ct.ConsoleCommands.ECHO_WITH_ONE_ARG.format(ct.ConsoleCommands.HELP_INFO))
         sys.exit(1)
     # Если проверка аргументов пройдена, начинает работать основная программа по замене INI-файла
