@@ -38,7 +38,14 @@ def run():
             kts_obj = kts.KTS(ip)
             kts_obj.set_rw()
             fo.mount(ip)
-            # Проверка существования файла с аналогичным названием в директории BIN примонтированной папки
+
+            # Проверка структуры, в старых образах работали с папкой BIN, в новой, работаю с папкой, которая прописана в /etc/project.conf
+            if fo.check_exist("project.conf", os.path.join(ct.Config.MEDIA_MOUNT_DIR, "etc")):
+                os.system("echo Иная файловая структура")
+                sys.exit(1)
+
+
+            # Проверка существования файла с аналогичным названием в директории BIN примонтированной папки /media/nmt/opt/PP589
             if not fo.check_exist(sys.argv[2], os.path.join(ct.Config.MEDIA_MOUNT_DIR, ct.Config.BIN_PATH)):
                 os.system(ct.Errors.FILE_NOT_EXIST_IN_MOUNT_MPK.format(sys.argv[2],
                                                                        os.path.join(
