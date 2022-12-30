@@ -39,14 +39,25 @@ def run():
             kts_obj.set_rw()
             fo.mount(ip)
 
-            # Проверка структуры, в старых образах работали с папкой BIN, в новой, работаю с папкой, которая прописана в /etc/project.conf
-            if fo.check_exist("project.conf", os.path.join(ct.Config.MEDIA_MOUNT_DIR, "etc")):
-                os.system("echo Иная файловая структура")
+            # создаем переменную, которая будет хранить в себе путь до директории, где должен храниться  INI файл,
+            # в зависимости от версии софта, эта директория может быть разной
+            path_ini_dir = ct.Config.DEFAULT_STRING
+
+            # Проверка структуры, в старых образах работали с папкой BIN, в новой, работаю с папкой,
+            # которая прописана в /etc/project.conf
+            if fo.check_exist(ct.Config.CONFIG_FILE, os.path.join(ct.Config.MEDIA_MOUNT_DIR, ct.Config.ETC_PATH)):
+                os.system("echo here!!!")
+                # path_ini_dir = fo.get_path_to_ini_dir(
+                #     os.path.join(ct.Config.MEDIA_MOUNT_DIR, ct.Config.ETC_PATH, ct.Config.CONFIG_FILE))
                 sys.exit(1)
+            else:
+                os.system("echo else!!!")
+                # path_ini_dir = os.path.join(ct.Config.MEDIA_MOUNT_DIR, ct.Config.BIN_PATH)
 
 
-            # Проверка существования файла с аналогичным названием в директории BIN примонтированной папки /media/nmt/opt/PP589
-            if not fo.check_exist(sys.argv[2], os.path.join(ct.Config.MEDIA_MOUNT_DIR, ct.Config.BIN_PATH)):
+            # Проверка существования файла с аналогичным названием в директории, согласно структуре примонтированной
+            # папки
+            if not fo.check_exist(sys.argv[2], os.path.join(ct.Config.MEDIA_MOUNT_DIR, path_ini_dir)):
                 os.system(ct.Errors.FILE_NOT_EXIST_IN_MOUNT_MPK.format(sys.argv[2],
                                                                        os.path.join(
                                                                            ct.Config.MEDIA_MOUNT_DIR,

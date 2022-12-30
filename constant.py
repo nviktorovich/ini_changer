@@ -10,6 +10,8 @@ class Config:
     HELP_FLAG_LONG = "--help"
     MEDIA_MOUNT_DIR = "/media/kts_mount"
     BIN_PATH = "BIN"
+    ETC_PATH = "etc"
+    CONFIG_FILE = "project.conf"
     KTS_MOUNT_DIR = "/mnt/sys"
     DATE_PATTERN = "%Y-%m-%d %H:%M "
 
