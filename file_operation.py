@@ -65,9 +65,10 @@ def get_ip(path):
 
 def get_path_to_ini_dir(path):
     with open(path, encoding=ct.Config.ENCODING) as file:
-        path = (file.readline().split("/"))[-2::]
-    os.system("echo директория {}".format(path))
-    return os.path.join(*path)
+        project_path = (file.readline().split("/"))
+    if len(project_path) < 4:
+        return ""
+    return os.path.join(*project_path[3::])
 
 
 

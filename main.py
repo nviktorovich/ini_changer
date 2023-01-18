@@ -41,23 +41,36 @@ def run():
 
             # создаем переменную, которая будет хранить в себе путь до директории, где должен храниться  INI файл,
             # в зависимости от версии софта, эта директория может быть разной
-            path_ini_dir = ct.Config.DEFAULT_STRING
+            work_path = ct.Config.DEFAULT_STRING
 
-            # Проверка структуры, в старых образах работали с папкой BIN, в новой, работаю с папкой,
-            # которая прописана в /etc/project.conf
-            if fo.check_exist(ct.Config.CONFIG_FILE, os.path.join(ct.Config.MEDIA_MOUNT_DIR, ct.Config.ETC_PATH)):
-                os.system("echo here!!!")
-                # path_ini_dir = fo.get_path_to_ini_dir(
-                #     os.path.join(ct.Config.MEDIA_MOUNT_DIR, ct.Config.ETC_PATH, ct.Config.CONFIG_FILE))
-                sys.exit(1)
+            # проверяем наличие директории /etc в примонтированной папке
+            if fo.check_exist(ct.Config.ETC_PATH, os.path.join(ct.Config.MEDIA_MOUNT_DIR)):
+
+                # Проверка структуры, в старых образах работали с папкой BIN, в новой, работаю с папкой,
+                # которая прописана в /etc/project.conf
+                # PROJECT_DIR=/mnt/sys/opt/DIRNAME
+                if fo.check_exist(ct.Config.CONFIG_FILE, os.path.join(ct.Config.MEDIA_MOUNT_DIR, ct.Config.ETC_PATH)):
+                    # проверка существования файла project.conf в папке /etc
+                    # необходимо вытащить все, что идет после sys, т.е opt/DIRNAME потому что для хоста путь будет таким
+                    # /media/kts_mount/opt/DIRNAME
+                    project_conf_path = fo.get_path_to_ini_dir(ct.Config.CONFIG_FILE)
+
+                    if project_conf_path == ct.Config.DEFAULT_STRING:
+                        os.system(ct.Errors.NOT_PATH_IN_PROJECT_CONF)
+                        sys.exit(1)
+                    else:
+                        work_path = os.path.join(ct.Config.MEDIA_MOUNT_DIR, project_conf_path)
+                else:
+                    work_path = os.path.join(ct.Config.MEDIA_MOUNT_DIR, ct.Config.BIN_PATH)
+
+            # Если папки /etc не существует, возвращается ошибка, программа перестает работу
             else:
-                os.system("echo else!!!")
-                # path_ini_dir = os.path.join(ct.Config.MEDIA_MOUNT_DIR, ct.Config.BIN_PATH)
+                os.system(ct.Errors.NOT_ETC_DIR.format(ct.Config.MEDIA_MOUNT_DIR))
+                sys.exit(1)
 
-
-            # Проверка существования файла с аналогичным названием в директории, согласно структуре примонтированной
+            # Проверка существования ini-файла с аналогичным названием в директории, согласно структуре примонтированной
             # папки
-            if not fo.check_exist(sys.argv[2], os.path.join(ct.Config.MEDIA_MOUNT_DIR, path_ini_dir)):
+            if not fo.check_exist(sys.argv[2], os.path.join(ct.Config.MEDIA_MOUNT_DIR, work_path)):
                 os.system(ct.Errors.FILE_NOT_EXIST_IN_MOUNT_MPK.format(sys.argv[2],
                                                                        os.path.join(
                                                                            ct.Config.MEDIA_MOUNT_DIR,
